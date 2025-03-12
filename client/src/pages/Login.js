@@ -29,7 +29,7 @@ const Login = () => {
       localStorage.setItem('loggedUsers', JSON.stringify(loggedUsers));
 
       alert('✅ Login successful!');
-      navigate('/profile');
+      navigate('/division-selection'); // Redirect to Division Selection page
     } else {
       setError('❌ Incorrect email or password.');
     }
