@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UserDetailsPage.css';
 
 const UserDetailsPage = () => {
@@ -7,12 +7,30 @@ const UserDetailsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [location, setLocation] = useState('Fetching...');
 
   const userDetails = {
     userId: 1,
     name: 'John Doe',
-    location: 'New York',
   };
+
+  // Fetch user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        },
+        (error) => {
+          setLocation('Unable to fetch location.');
+          console.error('Geolocation Error:', error);
+        }
+      );
+    } else {
+      setLocation('Geolocation is not supported by this browser.');
+    }
+  }, []);
 
   const handleImageClick = (image) => {
     setModalImage(image);
@@ -28,6 +46,7 @@ const UserDetailsPage = () => {
     // Save data to localStorage
     const formData = {
       ...userDetails,
+      location,
       image1: selectedImage1,
       image2: selectedImage2,
     };
@@ -41,9 +60,9 @@ const UserDetailsPage = () => {
       <div className="user-details-card">
         <h2>User Details</h2>
         <div className="user-info">
-          <p><strong>User ID:</strong> 1</p>
-          <p><strong>Name:</strong> John Doe</p>
-          <p><strong>Location:</strong> New York</p>
+          <p><strong>User ID:</strong> {userDetails.userId}</p>
+          <p><strong>Name:</strong> {userDetails.name}</p>
+          <p><strong>Location:</strong> {location}</p>
         </div>
 
         <div className="image-upload-section">
